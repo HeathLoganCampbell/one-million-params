@@ -1,4 +1,4 @@
-# tiny-gpt: a 1M parameter transformer that runs in WebAssembly
+# one-million-params
 
 A byte-level decoder-only transformer with **1,006,976 parameters**, small
 enough to train in minutes on a laptop, and small enough to run entirely in your
