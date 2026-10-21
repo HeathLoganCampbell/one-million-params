@@ -54,15 +54,14 @@ argmax      py=121 wasm=121  MATCH
 
 ## Trained weights
 
-Checkpoints are published as release assets rather than committed to git:
-
-**[Releases → v0.1.0](https://github.com/HeathLoganCampbell/one-million-params/releases/tag/v0.1.0)**
+Weights are committed under `models/`, and also attached to the
+[v0.1.0 release](https://github.com/HeathLoganCampbell/one-million-params/releases/tag/v0.1.0).
 
 | File | Corpus | Steps | Size |
 |---|---|---|---|
-| `tiny-gpt-1m-names.pt` | 100k first names | 3,000 | 4.04 MB |
-| `tiny-gpt-1m-gutenberg.pt` | 508 public-domain novels | 2,400 | 4.04 MB |
-| `tiny-gpt-1m-mixed.pt` | novels + 17 papers at 10% | in progress | 4.04 MB |
+| `models/tiny-gpt-1m-names.pt` | 100k first names | 3,000 | 4.04 MB |
+| `models/tiny-gpt-1m-gutenberg.pt` | 508 public-domain novels | 2,400 | 4.04 MB |
+| `models/tiny-gpt-1m-mixed.pt` | novels + 17 papers at 10% | in progress | 4.04 MB |
 
 Weights-only, no optimiser state, so they load straight into `GPT`:
 
@@ -70,7 +69,7 @@ Weights-only, no optimiser state, so they load straight into `GPT`:
 import torch
 from model import GPT, GPTConfig
 
-ckpt = torch.load("tiny-gpt-1m-mixed.pt", map_location="cpu")
+ckpt = torch.load("models/tiny-gpt-1m-mixed.pt", map_location="cpu")
 model = GPT(GPTConfig(**ckpt["config"]))
 model.load_state_dict(ckpt["model"])
 ```
