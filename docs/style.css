@@ -6,7 +6,8 @@ html, body {
 }
 
 .app {
-  height: 100dvh;
+  height: 100vh;      /* fallback for older mobile browsers */
+  height: 100dvh;     /* tracks the collapsing URL bar on iOS/Android */
   min-height: 0;
 }
 
@@ -28,6 +29,13 @@ h1 em {
   font-style: normal;
   font-weight: 300;
   color: var(--bs-primary);
+}
+
+.specs {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ---------------------------------------------------------------- loader */
@@ -126,10 +134,77 @@ h1 em {
   resize: none;
 }
 
+/* The prompt is the only thing the user touches, so give it more weight:
+   thicker border, more padding, larger type, and a resting shadow. */
+#prompt {
+  border: 2px solid var(--bs-border-color);
+  border-radius: 0.625rem;
+  padding: 0.9rem 1.05rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  min-height: 4rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+#prompt:hover {
+  border-color: var(--bs-secondary-color);
+}
+
+#prompt:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15);
+}
+
 .hint {
   color: var(--bs-secondary-color);
 }
 
+/* ---------------------------------------------------------------- phones */
 @media (max-width: 576px) {
-  .hint { display: none; }
+  .app-width {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* The specs string is the widest thing in the header; dropping it stops the
+     flex row from forcing the whole page wider than the viewport. */
+  .specs {
+    display: none;
+  }
+
+  header .app-width {
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .transcript {
+    padding: 1rem 0 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .turn.bot .body {
+    max-width: 100%;
+  }
+
+  #prompt {
+    min-height: 3.5rem;
+    padding: 0.8rem 0.9rem;
+  }
+
+  #composer {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .hint {
+    display: none;
+  }
+
+  footer .app-width {
+    padding-top: 0.5rem;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    font-size: 0.75rem;
+  }
 }
