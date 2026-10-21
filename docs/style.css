@@ -1,149 +1,47 @@
-/* Stripe design language: light type, generous whitespace, no shadows,
-   depth from surface luminance and 1px borders only. */
+/* Thin layer on top of Bootstrap 5.3 light theme.
+   Only the pieces Bootstrap has no opinion about: the transcript scroller,
+   the turn styling, and the streaming cursor. */
 
-:root {
-  color-scheme: light;          /* never let the UA apply dark form controls */
-  --navy: #061b31;
-  --navy-60: rgba(6, 27, 49, 0.6);
-  --navy-40: rgba(6, 27, 49, 0.4);
-  --purple: #533afd;
-  --purple-hover: #2e2b8c;
-  --purple-tint: #e2e4ff;
-  --purple-soft: #e8e9ff;
-  --surface: #f8fafd;
-  --border: #e5edf5;
-  --white: #ffffff;
-  --green: #81b81a;
-  --radius-sm: 4px;
-  --radius-base: 6px;
+html, body {
+  height: 100%;
+  color-scheme: light;
 }
 
-* { box-sizing: border-box; }
-
-html { -webkit-text-size-adjust: 100%; }
-
-body {
-  margin: 0;
-  background: var(--white);
-  color: var(--navy);
-  font-family: sohne-var, "SF Pro Display", -apple-system, BlinkMacSystemFont,
-               "Segoe UI", Roboto, sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  font-feature-settings: "ss01";
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+.app {
+  height: 100dvh;
+  min-height: 0;
 }
 
-/* ---------------------------------------------------------------- nav */
-.nav {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
+.app-width {
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
-.nav-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 0 32px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+/* Fills the viewport; the transcript scrolls instead of the page, so the
+   composer and footer can never be pushed off the bottom. */
+main.app-width {
+  min-height: 0;
 }
 
-.brand {
-  font-size: 17px;
-  font-weight: 400;
-  letter-spacing: -0.2px;
-  color: var(--navy);
-  text-decoration: none;
-}
-.brand em {
+h1 em {
   font-style: normal;
   font-weight: 300;
-  color: var(--purple);
+  color: var(--bs-primary);
 }
 
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.specs {
-  font-size: 13px;
-  color: var(--navy-60);
-  font-weight: 400;
-}
-
-.nav-link {
-  font-size: 14px;
-  color: var(--purple);
-  text-decoration: none;
-  transition: color 120ms ease, opacity 120ms ease;
-}
-.nav-link:hover {
-  color: var(--purple-hover);
-  opacity: 0.6;
-}
-
-/* ---------------------------------------------------------------- layout */
-main {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 0 32px 96px;
-}
-
-.hero {
-  padding: 88px 0 56px;
-  max-width: 720px;
-}
-
-.eyebrow {
-  margin: 0 0 20px;
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--navy-60);
-  letter-spacing: 0.02em;
-}
-
-h1 {
-  margin: 0 0 24px;
-  font-size: 48px;
-  font-weight: 300;
-  line-height: 1.15;
-  letter-spacing: -0.96px;
-  color: var(--navy);
-}
-
-.lede {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.55;
-  color: var(--navy-60);
-  max-width: 560px;
-}
-
-/* ---------------------------------------------------------------- panel */
-.panel {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-base);
-  overflow: hidden;
-}
-
+/* ---------------------------------------------------------------- transcript */
 .transcript {
-  background: var(--surface);
-  padding: 40px;
-  min-height: 320px;
-  max-height: 56vh;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.5rem 0 2rem;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 1.5rem;
 }
 
 .turn {
@@ -153,196 +51,69 @@ h1 {
 
 .turn .who {
   display: block;
-  margin-bottom: 8px;
-  font-size: 11px;
-  font-weight: 400;
+  margin-bottom: 0.35rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--navy-40);
+  color: var(--bs-secondary-color);
 }
 
 .turn.you .body {
   display: inline-block;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  color: var(--navy);
+  background: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.9rem;
 }
 
 .turn.bot .body {
-  font-size: 17px;
   line-height: 1.65;
-  color: var(--navy);
   max-width: 68ch;
 }
 
-.turn.bot .cursor {
+.cursor {
   display: inline-block;
-  width: 1px;
+  width: 0.5em;
   height: 1.05em;
   margin-left: 2px;
-  background: var(--purple);
+  background: var(--bs-primary);
   vertical-align: text-bottom;
   animation: blink 1s steps(2) infinite;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* ---------------------------------------------------------------- form */
-#composer {
-  padding: 28px 40px 32px;
-  border-top: 1px solid var(--border);
-}
-
-.field-label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 13px;
-  color: var(--navy-60);
-}
-
-textarea {
-  width: 100%;
-  resize: vertical;
-  min-height: 64px;
-  padding: 14px 16px;
-  font: inherit;
-  font-size: 16px;
-  color: var(--navy);
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  outline: none;
-  transition: border-color 120ms ease;
-}
-textarea::placeholder { color: var(--navy-40); }
-textarea:focus { border-color: var(--purple); }
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-
+/* ---------------------------------------------------------------- controls */
 .ctrl {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--navy-60);
+  gap: 0.5rem;
+  margin-bottom: 0;
 }
 
-.ctrl output {
-  min-width: 34px;
+.ctrl .form-range {
+  width: 96px;
+  margin: 0;
+}
+
+.ctrl span {
+  min-width: 2.2rem;
   font-variant-numeric: tabular-nums;
-  color: var(--navy);
+  color: var(--bs-body-color);
 }
 
-input[type="range"] {
-  width: 104px;
-  accent-color: var(--purple);
-  cursor: pointer;
+.ctrl .form-control {
+  width: 4.5rem;
 }
 
-input[type="number"] {
-  width: 62px;
-  padding: 6px 8px;
-  font: inherit;
-  font-size: 14px;
-  color: var(--navy);
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  outline: none;
-}
-input[type="number"]:focus { border-color: var(--purple); }
-
-.actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+#composer .form-control {
+  resize: none;
 }
 
-.btn {
-  font: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1;
-  padding: 11px 20px;
-  border-radius: var(--radius-base);
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: background 120ms ease, color 120ms ease, opacity 120ms ease;
+.hint {
+  color: var(--bs-secondary-color);
 }
 
-.btn-primary {
-  background: var(--purple);
-  border-color: var(--purple);
-  color: var(--white);
+@media (max-width: 576px) {
+  .hint { display: none; }
+  .ctrl .form-range { width: 72px; }
 }
-.btn-primary:hover:not(:disabled) { background: var(--purple-hover); border-color: var(--purple-hover); }
-
-.btn-secondary {
-  background: var(--purple-tint);
-  border-color: var(--purple-tint);
-  color: var(--purple);
-}
-.btn-secondary:hover { background: var(--purple-soft); border-color: var(--purple-soft); }
-
-.btn:disabled { opacity: 0.4; cursor: default; }
-
-/* ---------------------------------------------------------------- footer */
-footer {
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.footer-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 28px 32px;
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
-  font-size: 13px;
-  color: var(--navy-60);
-}
-
-.foot-note { color: var(--navy-40); }
-
-/* ---------------------------------------------------------------- responsive */
-@media (max-width: 760px) {
-  .nav-inner, main, .footer-inner { padding-left: 20px; padding-right: 20px; }
-  .hero { padding: 56px 0 40px; }
-  h1 { font-size: 30px; letter-spacing: -0.6px; }
-  .lede { font-size: 16px; }
-  .transcript { padding: 24px; }
-  #composer { padding: 24px; }
-  .specs { display: none; }
-  .actions { margin-left: 0; width: 100%; }
-  .btn-primary { margin-left: auto; }
-}
-
-/* ---------------------------------------------------------------- light-only */
-/* Belt and braces: even with the OS in dark mode, nothing here goes dark. */
-html, body { background: #ffffff; }
-input, textarea, button, select { color-scheme: light; }
-
-.transcript {
-  scrollbar-width: thin;
-  scrollbar-color: #d7e0ea var(--surface);
-}
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb {
-  background: #d7e0ea;
-  border-radius: 6px;
-  border: 2px solid var(--surface);
-}
-::-webkit-scrollbar-thumb:hover { background: #c2cede; }
-
-::selection { background: var(--purple-tint); color: var(--navy); }
