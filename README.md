@@ -30,11 +30,11 @@ compiled from AssemblyScript to wasm and executed on the client.
 | 1B | Basic instruction following with suitable training, simple coding | 2–8 weeks | 2 GB | Pythia-1B |
 | 10B | General-purpose language tasks, coding, reasoning | Months–years on one GPU | 20 GB | Llama 3 8B |
 | 100B | Advanced language generation, knowledge, reasoning | Large GPU cluster; weeks–months | 200 GB | GPT-3 (175B) |
-| 500B | Large-scale language modelling, advanced tasks | Large GPU cluster; months+ | 1 TB | PaLM (540B) |
-| 1T | Massive model capacity; potentially sparse expert routing | Large GPU cluster; months+ | 2 TB | Switch Transformer (1.6T total) |
-| 10T | Hypothetical ultra-large model; likely sparse architecture | Not reliably estimable | 20 TB | No widely verified exact-scale example |
-| 100T | Hypothetical model, enormous training and memory requirements | Not reliably estimable | 200 TB | No widely verified example |
-| 500T | Hypothetical model, beyond publicly demonstrated scale | Not reliably estimable | 1 PB | No widely verified example |
+| 500B | Large-scale language modelling, advanced tasks | Large GPU cluster; months+ | 1 TB | DeepSeek-V3  |
+| 1T | Massive model capacity; potentially sparse expert routing | Large GPU cluster; months+ | 2 TB | GPT4 |
+| 10T | Hypothetical ultra-large model; likely sparse architecture | Not reliably estimable | 20 TB | None|
+| 100T | Hypothetical model, enormous training and memory requirements | Not reliably estimable | 200 TB | None |
+| 500T | Hypothetical model, beyond publicly demonstrated scale | Not reliably estimable | 1 PB | None |
 
 ## Quickstart
 
