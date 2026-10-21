@@ -172,12 +172,12 @@ def main():
                   f"lr {optimizer.param_groups[0]['lr']:.2e}  "
                   f"{tps:,.0f} tok/s  {elapsed:6.1f}s")
 
-        if step > 0 and step % args.eval_every == 0:
+        if args.eval_every and step > 0 and step % args.eval_every == 0:
             losses = estimate_loss(model, splits, args.batch_size, args.block_size,
                                    device, args.eval_iters)
             print(f"          eval: train {losses['train']:.4f}  val {losses['val']:.4f}")
 
-        if step > 0 and step % args.sample_every == 0:
+        if args.sample_every and step > 0 and step % args.sample_every == 0:
             # newline, not NUL: token 0 is out of distribution and produces noise
             start = torch.tensor([[10]], dtype=torch.long, device=device)
             out = model.generate(start, 200, temperature=0.9, top_k=40)
