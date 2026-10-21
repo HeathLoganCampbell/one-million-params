@@ -3,7 +3,7 @@
     python pdf_to_text.py                  # -> data/papers.txt
     python pdf_to_text.py --mix-with data/gutenberg-full.txt --out data/mixed.txt
 
-PDF text extraction is lossy — expect running headers, page numbers, broken
+PDF text extraction is lossy. Expect running headers, page numbers, broken
 hyphenation, and mangled equations.
 """
 

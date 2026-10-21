@@ -39,7 +39,7 @@ async function loadWeights() {
 function addIntro(bytes) {
   addTurn(
     "bot",
-    `Model loaded — ${meta.params.toLocaleString()} parameters, ` +
+    `Model loaded: ${meta.params.toLocaleString()} parameters, ` +
     `${(bytes / 1e6).toFixed(2)} MB, running locally.\n\n` +
     `${BLURB} It continues your text; it doesn't answer questions.`
   );

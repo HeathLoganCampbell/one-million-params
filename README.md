@@ -1,11 +1,11 @@
-# tiny-gpt — a 1M parameter transformer that runs in WebAssembly
+# tiny-gpt: a 1M parameter transformer that runs in WebAssembly
 
-A byte-level decoder-only transformer with **1,006,976 parameters** — small
+A byte-level decoder-only transformer with **1,006,976 parameters**, small
 enough to train in minutes on a laptop, and small enough to run entirely in your
 browser from a **13 KB WebAssembly module** and a **4 MB weight file**.
 
-There is no server and no API call. The forward pass — embeddings, 5 layers of
-RMSNorm → QKV → RoPE → causal attention → SwiGLU, tied output head — is
+There is no server and no API call. The forward pass (embeddings, 5 layers of
+RMSNorm → QKV → RoPE → causal attention → SwiGLU, tied output head) is
 compiled from AssemblyScript to wasm and executed on the client.
 
 **Live demo:** https://heathlogancampbell.github.io/one-million-params/
@@ -159,7 +159,7 @@ cd .. && .venv/bin/python parity_check.py --ckpt checkpoints/gutenberg.pt && cd 
 npm test             # compares wasm logits to PyTorch's
 ```
 
-The site is a text-completion interface, not a chatbot — the model has no
+The site is a text-completion interface, not a chatbot: the model has no
 instruction tuning, so it continues your prompt rather than answering it.
 
 ## The shape of the model
@@ -199,7 +199,7 @@ python train.py --n-layer 10
 ```
 
 Because the vocabulary is bytes, parameter count depends only on
-`n_layer`, `n_embd`, `n_head`, and `mlp_hidden` — never on the corpus.
+`n_layer`, `n_embd`, `n_head`, and `mlp_hidden`, never on the corpus.
 Note the `12·L·d²` rule: halving width quarters the parameter count, so
 width is a much sharper knob than depth.
 
@@ -220,7 +220,7 @@ docs/               AssemblyScript kernel + static site
 ## Mixing corpora
 
 A 1M-parameter model learns one distribution. Mixing sources of very different
-sizes does not give you a model that does both — it gives you the larger domain
+sizes does not give you a model that does both. It gives you the larger domain
 with noise. `build_mixed.py` up-weights a small source so it actually registers:
 
 ```bash
@@ -238,5 +238,5 @@ representative of the whole corpus.
 
 - `--block-size 128` is enough for names; use 256+ for prose.
 - Watch the gap between train and val loss. If val starts rising while train
-  falls, you're memorizing — cut steps or add `--dropout 0.1`.
+  falls, you're memorizing: cut steps or add `--dropout 0.1`.
 - At this size, data quality matters more than every hyperparameter combined.

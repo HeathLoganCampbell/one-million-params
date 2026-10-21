@@ -1,6 +1,6 @@
 # Paper corpus
 
-The PDFs are not committed — they belong to their authors. Download them into
+The PDFs are not committed; they belong to their authors. Download them into
 this directory and run `python pdf_to_text.py` to build `data/papers.txt`.
 
 ```bash
