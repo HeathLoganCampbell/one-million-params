@@ -2,6 +2,7 @@
    depth from surface luminance and 1px borders only. */
 
 :root {
+  color-scheme: light;          /* never let the UA apply dark form controls */
   --navy: #061b31;
   --navy-60: rgba(6, 27, 49, 0.6);
   --navy-40: rgba(6, 27, 49, 0.4);
@@ -325,3 +326,23 @@ footer {
   .actions { margin-left: 0; width: 100%; }
   .btn-primary { margin-left: auto; }
 }
+
+/* ---------------------------------------------------------------- light-only */
+/* Belt and braces: even with the OS in dark mode, nothing here goes dark. */
+html, body { background: #ffffff; }
+input, textarea, button, select { color-scheme: light; }
+
+.transcript {
+  scrollbar-width: thin;
+  scrollbar-color: #d7e0ea var(--surface);
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb {
+  background: #d7e0ea;
+  border-radius: 6px;
+  border: 2px solid var(--surface);
+}
+::-webkit-scrollbar-thumb:hover { background: #c2cede; }
+
+::selection { background: var(--purple-tint); color: var(--navy); }
