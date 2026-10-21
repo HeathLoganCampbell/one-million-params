@@ -1,6 +1,4 @@
-/* Thin layer on top of Bootstrap 5.3 light theme.
-   Only the pieces Bootstrap has no opinion about: the transcript scroller,
-   the turn styling, and the streaming cursor. */
+/* Thin layer on top of Bootstrap 5.3 light theme. */
 
 html, body {
   height: 100%;
@@ -21,8 +19,7 @@ html, body {
   padding-right: 1.25rem;
 }
 
-/* Fills the viewport; the transcript scrolls instead of the page, so the
-   composer and footer can never be pushed off the bottom. */
+/* The transcript scrolls, not the page, so the composer and footer stay put. */
 main.app-width {
   min-height: 0;
 }
@@ -31,6 +28,48 @@ h1 em {
   font-style: normal;
   font-weight: 300;
   color: var(--bs-primary);
+}
+
+/* ---------------------------------------------------------------- loader */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: var(--bs-body-bg);
+  transition: opacity 350ms ease;
+}
+
+.loader.gone {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-inner {
+  width: min(380px, calc(100vw - 3rem));
+}
+
+.loader-label {
+  font-size: 0.95rem;
+  color: var(--bs-body-color);
+}
+
+.loader-pct {
+  font-size: 0.8rem;
+  color: var(--bs-secondary-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.loader .progress {
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--bs-secondary-bg);
+}
+
+.loader .progress-bar {
+  background-color: var(--bs-primary);
+  transition: width 80ms linear;
 }
 
 /* ---------------------------------------------------------------- transcript */
@@ -82,29 +121,7 @@ h1 em {
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* ---------------------------------------------------------------- controls */
-.ctrl {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0;
-}
-
-.ctrl .form-range {
-  width: 96px;
-  margin: 0;
-}
-
-.ctrl span {
-  min-width: 2.2rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--bs-body-color);
-}
-
-.ctrl .form-control {
-  width: 4.5rem;
-}
-
+/* ---------------------------------------------------------------- form */
 #composer .form-control {
   resize: none;
 }
@@ -115,5 +132,4 @@ h1 em {
 
 @media (max-width: 576px) {
   .hint { display: none; }
-  .ctrl .form-range { width: 72px; }
 }

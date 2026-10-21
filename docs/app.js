@@ -16,6 +16,12 @@ let abort = false;
 
 const BLURB = "Trained on 508 public-domain novels plus 17 machine-learning papers.";
 
+// Sampling settings are fixed in the UI now.
+const TEMPERATURE = 0.85;
+const TOP_K = 60;
+const MAX_TOKENS = 120;
+const LOADER_MS = 7000;
+
 // ---------------------------------------------------------------- loading
 async function loadWeights() {
   const res = await fetch("model.bin");
@@ -39,19 +45,48 @@ function addIntro(bytes) {
   );
 }
 
+// Drives the progress bar for a fixed duration so the load always reads as a
+// deliberate download rather than a flash.
+function runLoader(ms) {
+  const bar = $("loadbar");
+  const pct = $("loadpct");
+  const started = performance.now();
+
+  return new Promise((resolve) => {
+    function step() {
+      const t = Math.min((performance.now() - started) / ms, 1);
+      const p = Math.round(t * 100);
+      bar.style.width = p + "%";
+      bar.parentElement.setAttribute("aria-valuenow", p);
+      pct.textContent = p + "%";
+      if (t < 1) requestAnimationFrame(step);
+      else resolve();
+    }
+    step();
+  });
+}
+
 async function boot() {
+  const loader = $("loader");
   try {
-    meta = await (await fetch("model.json")).json();
+    const work = (async () => {
+      meta = await (await fetch("model.json")).json();
 
-    const wasmBytes = await (await fetch("build/model.wasm")).arrayBuffer();
-    const { instance } = await WebAssembly.instantiate(wasmBytes, {
-      env: { abort: () => { throw new Error("wasm aborted"); } },
-    });
-    ex = instance.exports;
-    ex.init();
-    maxT = ex.contextLen();
+      const wasmBytes = await (await fetch("build/model.wasm")).arrayBuffer();
+      const { instance } = await WebAssembly.instantiate(wasmBytes, {
+        env: { abort: () => { throw new Error("wasm aborted"); } },
+      });
+      ex = instance.exports;
+      ex.init();
+      maxT = ex.contextLen();
 
-    const bytes = await loadWeights();
+      return await loadWeights();
+    })();
+
+    const [bytes] = await Promise.all([work, runLoader(LOADER_MS)]);
+
+    loader.classList.add("gone");
+    setTimeout(() => loader.remove(), 400);
 
     $("specs").textContent =
       `${meta.layers}L · ${meta.heads}H · ${meta.dim}d · ` +
@@ -60,6 +95,7 @@ async function boot() {
     sendBtn.disabled = false;
     addIntro(bytes);
   } catch (e) {
+    $("loadpct").textContent = "failed";
     statusEl.textContent = "failed to load: " + e.message;
     console.error(e);
   }
@@ -114,9 +150,9 @@ async function generate(text) {
   sendBtn.disabled = true;
   stopBtn.hidden = false;
 
-  const temperature = parseFloat($("temp").value);
-  const topK = parseInt($("topk").value, 10);
-  const budget = Math.min(parseInt($("maxtok").value, 10) || 120, maxT);
+  const temperature = TEMPERATURE;
+  const topK = TOP_K;
+  const budget = Math.min(MAX_TOKENS, maxT);
 
   const youTurn = addTurn("you", text);
   const botTurn = addTurn("bot", "");
@@ -205,11 +241,6 @@ promptEl.addEventListener("keydown", (e) => {
     $("composer").requestSubmit();
   }
 });
-
-for (const [id, out] of [["temp", "tempval"], ["topk", "topkval"]]) {
-  const el = $(id);
-  el.addEventListener("input", () => { $(out).textContent = el.value; });
-}
 
 sendBtn.disabled = true;
 boot();

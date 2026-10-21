@@ -11,6 +11,16 @@
 </head>
 <body>
 
+<div id="loader" class="loader">
+  <div class="loader-inner">
+    <p class="loader-label mb-3">Downloading model weights into your browser…</p>
+    <div class="progress" role="progressbar" aria-label="Loading model" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div id="loadbar" class="progress-bar" style="width: 0%"></div>
+    </div>
+    <p class="loader-pct mt-2 mb-0"><span id="loadpct">0%</span></p>
+  </div>
+</div>
+
 <div class="app d-flex flex-column">
 
   <header class="border-bottom bg-body">
@@ -27,19 +37,7 @@
       <textarea id="prompt" class="form-control mb-3" rows="2"
         placeholder="Type some text and press Enter — the model continues it…"></textarea>
 
-      <div class="d-flex align-items-center gap-3 flex-wrap">
-        <label class="ctrl small text-secondary">temp
-          <input id="temp" type="range" class="form-range" min="0" max="1.5" step="0.05" value="0.85" />
-          <span id="tempval">0.85</span>
-        </label>
-        <label class="ctrl small text-secondary">top-k
-          <input id="topk" type="range" class="form-range" min="0" max="256" step="1" value="60" />
-          <span id="topkval">60</span>
-        </label>
-        <label class="ctrl small text-secondary">tokens
-          <input id="maxtok" type="number" class="form-control form-control-sm" min="1" max="256" value="120" />
-        </label>
-
+      <div class="d-flex align-items-center">
         <div class="ms-auto d-flex gap-2">
           <button id="stop" type="button" class="btn btn-outline-secondary btn-sm" hidden>Stop</button>
           <button id="send" type="submit" class="btn btn-primary btn-sm" disabled>Continue</button>
