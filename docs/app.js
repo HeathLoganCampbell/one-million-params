@@ -14,7 +14,7 @@ let maxT = 256;
 let running = false;
 let abort = false;
 
-const BLURB = "508 public-domain novels + 17 ML papers. One model, one distribution.";
+const BLURB = "Trained on 508 public-domain novels plus 17 machine-learning papers.";
 
 // ---------------------------------------------------------------- loading
 async function loadWeights() {
@@ -33,10 +33,9 @@ async function loadWeights() {
 function addIntro(bytes) {
   addTurn(
     "bot",
-    `${meta.layers} layers · ${meta.params.toLocaleString()} parameters · ` +
-    `${(bytes / 1e6).toFixed(2)} MB\n\n${BLURB}\n\n` +
-    `This is a text-completion model, not a chatbot — it continues whatever you type ` +
-    `rather than answering it.`
+    `Model loaded — ${meta.params.toLocaleString()} parameters, ` +
+    `${(bytes / 1e6).toFixed(2)} MB, running locally.\n\n` +
+    `${BLURB} It continues your text; it doesn't answer questions.`
   );
 }
 
@@ -193,7 +192,9 @@ $("composer").addEventListener("submit", (e) => {
   if (!ex || running) return;
   const text = promptEl.value.trim();
   if (!text) return;
+  promptEl.value = "";          // clear the box immediately on submit
   generate(text);
+  promptEl.focus();
 });
 
 $("stop").addEventListener("click", () => { abort = true; });

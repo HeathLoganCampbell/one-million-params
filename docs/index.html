@@ -3,34 +3,67 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>tiny-gpt · 1M params in WASM</title>
+<meta name="theme-color" content="#ffffff" />
+<title>tiny-gpt — a 1M parameter model in WebAssembly</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header>
-  <h1>tiny<em>gpt</em></h1>
-  <div class="specs" id="specs">loading…</div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="./">tiny<em>gpt</em></a>
+    <div class="nav-right">
+      <span class="specs" id="specs">loading…</span>
+      <a class="nav-link" href="https://github.com/HeathLoganCampbell/one-million-params">GitHub</a>
+    </div>
+  </div>
 </header>
 
 <main>
-  <div id="transcript" class="transcript"></div>
+  <section class="hero">
+    <p class="eyebrow">1,006,976 parameters · 13 KB of WebAssembly</p>
+    <h1>A language model small enough<br />to run in your browser.</h1>
+    <p class="lede">
+      Every forward pass happens on your machine. It continues what you type —
+      it does not answer questions.
+    </p>
+  </section>
 
-  <form id="composer" autocomplete="off">
-    <textarea id="prompt" rows="2"
-      placeholder="Type some text and press Enter — the model continues it…"></textarea>
-    <div class="controls">
-      <label>temp <input id="temp" type="range" min="0" max="1.5" step="0.05" value="0.85" /><span id="tempval">0.85</span></label>
-      <label>top-k <input id="topk" type="range" min="0" max="256" step="1" value="60" /><span id="topkval">60</span></label>
-      <label>tokens <input id="maxtok" type="number" min="1" max="256" value="120" /></label>
-      <button id="send" type="submit">Continue</button>
-      <button id="stop" type="button" hidden>Stop</button>
-    </div>
-  </form>
+  <section class="panel">
+    <div id="transcript" class="transcript"></div>
+
+    <form id="composer" autocomplete="off">
+      <label class="field-label" for="prompt">Prompt</label>
+      <textarea id="prompt" rows="2"
+        placeholder="It was a dark and…"></textarea>
+
+      <div class="controls">
+        <label class="ctrl">temp
+          <input id="temp" type="range" min="0" max="1.5" step="0.05" value="0.85" />
+          <output id="tempval">0.85</output>
+        </label>
+        <label class="ctrl">top-k
+          <input id="topk" type="range" min="0" max="256" step="1" value="60" />
+          <output id="topkval">60</output>
+        </label>
+        <label class="ctrl">tokens
+          <input id="maxtok" type="number" min="1" max="256" value="120" />
+        </label>
+
+        <div class="actions">
+          <button id="stop" type="button" class="btn btn-secondary" hidden>Stop</button>
+          <button id="send" type="submit" class="btn btn-primary">Continue</button>
+        </div>
+      </div>
+    </form>
+  </section>
 </main>
 
 <footer>
-  <span id="status">…</span>
-  <span class="hint">Runs entirely in your browser via WebAssembly. No server, no network calls after load.</span>
+  <div class="footer-inner">
+    <span id="status">Loading model…</span>
+    <span class="foot-note">No server, no API calls. Weights and kernel are fetched once, then everything is local.</span>
+  </div>
 </footer>
 
 <script type="module" src="app.js"></script>
