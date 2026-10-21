@@ -45,24 +45,26 @@ function addIntro(bytes) {
   );
 }
 
-// Drives the progress bar for a fixed duration so the load always reads as a
-// deliberate download rather than a flash.
+// Drives the progress bar for a fixed duration. Uses a timer rather than
+// requestAnimationFrame because rAF is paused in background tabs, which would
+// leave the overlay stuck at 0% forever.
 function runLoader(ms) {
   const bar = $("loadbar");
   const pct = $("loadpct");
   const started = performance.now();
 
   return new Promise((resolve) => {
-    function step() {
+    const timer = setInterval(() => {
       const t = Math.min((performance.now() - started) / ms, 1);
       const p = Math.round(t * 100);
       bar.style.width = p + "%";
       bar.parentElement.setAttribute("aria-valuenow", p);
       pct.textContent = p + "%";
-      if (t < 1) requestAnimationFrame(step);
-      else resolve();
-    }
-    step();
+      if (t >= 1) {
+        clearInterval(timer);
+        resolve();
+      }
+    }, 50);
   });
 }
 
@@ -95,7 +97,9 @@ async function boot() {
     sendBtn.disabled = false;
     addIntro(bytes);
   } catch (e) {
-    $("loadpct").textContent = "failed";
+    // Never leave the overlay covering a page that failed to initialise.
+    loader.classList.add("gone");
+    setTimeout(() => loader.remove(), 400);
     statusEl.textContent = "failed to load: " + e.message;
     console.error(e);
   }
