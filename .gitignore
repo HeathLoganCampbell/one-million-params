@@ -1,0 +1,17 @@
+# Data and checkpoints are large and reproducible
+data/
+checkpoints/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+web/node_modules/
+
+# Generated test fixture (regenerate with parity_check.py)
+web/expected.json
+
+# Source PDFs are copyrighted by their authors; see papers/README.md
+papers/*.pdf

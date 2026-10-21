@@ -1,0 +1,10 @@
+{
+  "params": 1006976,
+  "dim": 128,
+  "heads": 4,
+  "layers": 5,
+  "mlp": 336,
+  "vocab": 256,
+  "block": 256,
+  "corpus": "gutenberg-full"
+}

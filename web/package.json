@@ -1,0 +1,13 @@
+{
+  "name": "tiny-gpt-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "mkdir -p build && asc assembly/index.ts -o build/model.wasm -O3 --runtime stub --noAssert",
+    "serve": "node serve.mjs",
+    "test": "node test.mjs"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.28.20"
+  }
+}

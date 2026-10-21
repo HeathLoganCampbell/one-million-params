@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>tiny-gpt · 1M params in WASM</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+  <h1>tiny<em>gpt</em></h1>
+  <div class="specs" id="specs">loading…</div>
+</header>
+
+<main>
+  <div id="transcript" class="transcript"></div>
+
+  <form id="composer" autocomplete="off">
+    <textarea id="prompt" rows="2"
+      placeholder="Type some text and press Enter — the model continues it…"></textarea>
+    <div class="controls">
+      <label>temp <input id="temp" type="range" min="0" max="1.5" step="0.05" value="0.85" /><span id="tempval">0.85</span></label>
+      <label>top-k <input id="topk" type="range" min="0" max="256" step="1" value="60" /><span id="topkval">60</span></label>
+      <label>tokens <input id="maxtok" type="number" min="1" max="256" value="120" /></label>
+      <button id="send" type="submit">Continue</button>
+      <button id="stop" type="button" hidden>Stop</button>
+    </div>
+  </form>
+</main>
+
+<footer>
+  <span id="status">…</span>
+  <span class="hint">Runs entirely in your browser via WebAssembly. No server, no network calls after load.</span>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
