@@ -8,10 +8,10 @@ __pycache__/
 *.pyc
 
 # Node
-web/node_modules/
+docs/node_modules/
 
 # Generated test fixture (regenerate with parity_check.py)
-web/expected.json
+docs/expected.json
 
 # Source PDFs are copyrighted by their authors; see papers/README.md
 papers/*.pdf

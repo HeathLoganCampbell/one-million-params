@@ -21,8 +21,8 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python train.py --corpus names --steps 3000 --block-size 128
 
 # run the site
-.venv/bin/python export_weights.py --ckpt checkpoints/model.pt --out web
-cd web && npm install && npm run build && npm run serve
+.venv/bin/python export_weights.py --ckpt checkpoints/model.pt --out docs
+cd docs && npm install && npm run build && npm run serve
 # -> http://localhost:8080
 ```
 
@@ -38,8 +38,8 @@ cd web && npm install && npm run build && npm run serve
 | `train.py` | training loop, cosine LR, eval, checkpointing |
 | `export_weights.py` | flat float32 weights for the wasm kernel |
 | `parity_check.py` | PyTorch reference logits for kernel verification |
-| `web/assembly/index.ts` | the inference kernel |
-| `web/` | static site |
+| `docs/assembly/index.ts` | the inference kernel |
+| `docs/` | static site |
 
 ## Verified
 
@@ -83,19 +83,19 @@ argmax      py=121 wasm=121  MATCH
 
 ## Run it in the browser (WebAssembly)
 
-The inference kernel in `web/assembly/index.ts` is AssemblyScript, compiled to a
+The inference kernel in `docs/assembly/index.ts` is AssemblyScript, compiled to a
 13 KB wasm module that holds the whole forward pass. Weights are a flat 4 MB
 float32 blob.
 
 ```bash
-cd web
+cd docs
 npm install
 
 # build the wasm kernel
 npm run build
 
 # export weights from a checkpoint
-cd .. && .venv/bin/python export_weights.py --ckpt checkpoints/gutenberg.pt --out web && cd web
+cd .. && .venv/bin/python export_weights.py --ckpt checkpoints/gutenberg.pt --out docs && cd docs
 
 # serve
 npm run serve        # http://localhost:8080
@@ -104,7 +104,7 @@ npm run serve        # http://localhost:8080
 Verify the kernel against PyTorch at any time:
 
 ```bash
-cd .. && .venv/bin/python parity_check.py --ckpt checkpoints/gutenberg.pt && cd web
+cd .. && .venv/bin/python parity_check.py --ckpt checkpoints/gutenberg.pt && cd docs
 npm test             # compares wasm logits to PyTorch's
 ```
 
@@ -163,24 +163,25 @@ train.py           training loop, cosine LR, eval, sampling
 sample.py          load a checkpoint and generate
 export_weights.py  dump flat float32 weights for the WASM kernel
 parity_check.py    reference logits from PyTorch, for testing the kernel
-web/               AssemblyScript kernel + static site
+docs/               AssemblyScript kernel + static site
 ```
 
-## Domain specialists
+## Mixing corpora
 
-A 1M-parameter model learns one distribution well. Mixing corpora of very
-different sizes does not give you a model that does both — it gives you the
-larger domain with noise. The papers corpus is 0.57% of the novels corpus, so
-the way to use it is a second model:
+A 1M-parameter model learns one distribution. Mixing sources of very different
+sizes does not give you a model that does both — it gives you the larger domain
+with noise. `build_mixed.py` up-weights a small source so it actually registers:
 
 ```bash
-python pdf_to_text.py                              # 17 PDFs -> data/papers.txt
-python train.py --corpus papers --steps 2500 --dropout 0.1 \
-    --export-web web/models/papers
+python pdf_to_text.py                                   # PDFs -> data/papers.txt
+python build_mixed.py --share 0.10 --out data/mixed.txt  # 10% papers
+python train.py --corpus mixed --steps 20000 --dropout 0.1
 ```
 
-The site loads `web/models/<name>/model.bin` and exposes a switcher in the
-header, so both specialists share one WASM kernel.
+Repetition is the weighting mechanism: at 1M parameters the model cannot
+memorise the repeated text, so it learns the style rather than the content.
+Sources are interleaved rather than appended, so the validation split stays
+representative of the whole corpus.
 
 ## Notes
 
