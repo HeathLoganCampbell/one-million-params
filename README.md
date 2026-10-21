@@ -8,6 +8,8 @@ There is no server and no API call. The forward pass — embeddings, 5 layers of
 RMSNorm → QKV → RoPE → causal attention → SwiGLU, tied output head — is
 compiled from AssemblyScript to wasm and executed on the client.
 
+**Live demo:** https://heathlogancampbell.github.io/one-million-params/
+
 > **It is a text-completion model, not a chatbot.** It continues what you type;
 > it does not answer questions. Nothing in this pipeline includes instruction
 > tuning.
@@ -48,6 +50,29 @@ The wasm kernel is checked against PyTorch on identical input:
 ```
 max |diff|  2.646e-5
 argmax      py=121 wasm=121  MATCH
+```
+
+## Trained weights
+
+Checkpoints are published as release assets rather than committed to git:
+
+**[Releases → v0.1.0](https://github.com/HeathLoganCampbell/one-million-params/releases/tag/v0.1.0)**
+
+| File | Corpus | Steps | Size |
+|---|---|---|---|
+| `tiny-gpt-1m-names.pt` | 100k first names | 3,000 | 4.04 MB |
+| `tiny-gpt-1m-gutenberg.pt` | 508 public-domain novels | 2,400 | 4.04 MB |
+| `tiny-gpt-1m-mixed.pt` | novels + 17 papers at 10% | in progress | 4.04 MB |
+
+Weights-only, no optimiser state, so they load straight into `GPT`:
+
+```python
+import torch
+from model import GPT, GPTConfig
+
+ckpt = torch.load("tiny-gpt-1m-mixed.pt", map_location="cpu")
+model = GPT(GPTConfig(**ckpt["config"]))
+model.load_state_dict(ckpt["model"])
 ```
 
 ## Training
