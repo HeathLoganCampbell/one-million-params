@@ -14,6 +14,28 @@ compiled from AssemblyScript to wasm and executed on the client.
 > it does not answer questions. Nothing in this pipeline includes instruction
 > tuning.
 
+## Model Size Comparison
+
+| Parameters | Typical Capability | Rough Training Time | Model Size (FP16) | Real Example / Reference |
+|---|---|---|---|---|
+| 100K | Simple pattern recognition, tiny classifiers | Seconds–minutes | 0.2 MB | Small custom neural networks |
+| **1M** | **Basic text patterns, character prediction, simple sequences** | **Minutes** | **2 MB** | **My first 1M model!** |
+| 5M | Simple language generation, narrow domain tasks | Minutes | 10 MB | TinyStories-scale experimental models |
+| 10M | Basic grammar, short text generation | Minutes–1 hour | 20 MB | Small experimental transformers |
+| 30M | Basic sentence completion and simple language modelling | 1–3 hours | 60 MB | Pythia-31M |
+| 50M | Basic language patterns, limited factual recall | 2–6 hours | 100 MB | Between Pythia-31M and Pythia-70M |
+| 100M | More coherent short text, basic domain-specific tasks | 3–12 hours | 200 MB | GPT-2 Small (124M) |
+| 200M | Improved language modelling, limited question answering | 12–48 hours | 400 MB | Pythia-160M |
+| 500M | Short-form generation, summarisation with suitable tuning | 3–14 days | 1 GB | Pythia-410M |
+| 1B | Basic instruction following with suitable training, simple coding | 2–8 weeks | 2 GB | Pythia-1B |
+| 10B | General-purpose language tasks, coding, reasoning | Months–years on one GPU | 20 GB | Llama 3 8B |
+| 100B | Advanced language generation, knowledge, reasoning | Large GPU cluster; weeks–months | 200 GB | GPT-3 (175B) |
+| 500B | Large-scale language modelling, advanced tasks | Large GPU cluster; months+ | 1 TB | PaLM (540B) |
+| 1T | Massive model capacity; potentially sparse expert routing | Large GPU cluster; months+ | 2 TB | Switch Transformer (1.6T total) |
+| 10T | Hypothetical ultra-large model; likely sparse architecture | Not reliably estimable | 20 TB | No widely verified exact-scale example |
+| 100T | Hypothetical model, enormous training and memory requirements | Not reliably estimable | 200 TB | No widely verified example |
+| 500T | Hypothetical model, beyond publicly demonstrated scale | Not reliably estimable | 1 PB | No widely verified example |
+
 ## Quickstart
 
 ```bash
