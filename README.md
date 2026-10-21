@@ -59,6 +59,7 @@ cd docs && npm install && npm run build && npm run serve
 | `fetch_corpus.py` | builds a Gutenberg corpus from the official catalogue |
 | `pdf_to_text.py` | turns `papers/*.pdf` into a training corpus |
 | `build_mixed.py` | mixes corpora at a chosen weight |
+| `make_chat_data.py` | builds the `User:` / `Assistant:` turn corpus |
 | `train.py` | training loop, cosine LR, eval, checkpointing |
 | `export_weights.py` | flat float32 weights for the wasm kernel |
 | `parity_check.py` | PyTorch reference logits for kernel verification |
@@ -210,12 +211,42 @@ model.py           architecture (RMSNorm, RoPE, SwiGLU, tied embeddings)
 data.py            corpus download, byte encoding, batching
 fetch_corpus.py    builds a large corpus from Gutenberg's catalogue
 pdf_to_text.py     extracts papers/*.pdf into a training corpus
+build_mixed.py     mixes corpora at a chosen weight
+make_chat_data.py  builds a User/Assistant turn corpus for fine-tuning
 train.py           training loop, cosine LR, eval, sampling
 sample.py          load a checkpoint and generate
 export_weights.py  dump flat float32 weights for the WASM kernel
 parity_check.py    reference logits from PyTorch, for testing the kernel
-docs/               AssemblyScript kernel + static site
+docs/              AssemblyScript kernel + static site
 ```
+
+## Chat fine-tuning
+
+The deployed model answers in a rigid `User:` / `Assistant:` format. A 1M model
+cannot follow instructions, but it can learn a turn template and a few hundred
+canned replies.
+
+```bash
+python make_chat_data.py --mb 4 --prose data/mixed.txt \
+    --prose-share 0.4 --mash-share 0.12 --out data/chat.txt
+python train.py --data data/chat.txt --init-from checkpoints/mixed.pt \
+    --steps 4000 --lr 3e-4 --min-lr 1e-5 --dropout 0.0
+```
+
+`--init-from` loads weights but starts a fresh LR schedule, which is what you
+want for SFT. `--resume` would restore the old step counter and the old
+optimiser state as well.
+
+Two things keep the fine-tune from collapsing into pure chit-chat:
+
+- **40% prose is interleaved** through the corpus, so the model keeps its
+  language ability instead of forgetting everything it learned from novels.
+- **12% of exchanges are keyboard mashing answered with `?`**, so gibberish is
+  handled by the model rather than by a UI heuristic. It generalises imperfectly
+  (it is a 1M model), but the behaviour is genuinely learned.
+
+Sampling runs at temperature 0.5 with top-k 20 so short replies stay
+on-distribution.
 
 ## Mixing corpora
 

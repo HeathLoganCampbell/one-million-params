@@ -14,11 +14,11 @@ let maxT = 256;
 let running = false;
 let abort = false;
 
-const BLURB = "Trained on 508 public-domain novels plus 17 machine-learning papers.";
+const BLURB = "A 1M parameter model fine-tuned on short chat exchanges. It replies to greetings and small talk, and falls apart on anything else.";
 
 // Sampling settings are fixed in the UI now.
-const TEMPERATURE = 0.85;
-const TOP_K = 60;
+const TEMPERATURE = 0.5;
+const TOP_K = 20;
 const MAX_TOKENS = 120;
 const LOADER_MS = 7000;
 
@@ -40,8 +40,7 @@ function addIntro(bytes) {
   addTurn(
     "bot",
     `Model loaded: ${meta.params.toLocaleString()} parameters, ` +
-    `${(bytes / 1e6).toFixed(2)} MB, running locally.\n\n` +
-    `${BLURB} It continues your text; it doesn't answer questions.`
+    `${(bytes / 1e6).toFixed(2)} MB, running locally.\n\n${BLURB}`
   );
 }
 
@@ -148,6 +147,17 @@ function softmaxSample(ptr, temperature, topK) {
 }
 
 // ---------------------------------------------------------------- generate
+const STOPS = ["\nUser:", "\n\n"];
+
+function earliestStop(s) {
+  let best = -1;
+  for (const m of STOPS) {
+    const i = s.indexOf(m);
+    if (i !== -1 && (best === -1 || i < best)) best = i;
+  }
+  return best;
+}
+
 async function generate(text) {
   running = true;
   abort = false;
@@ -161,39 +171,53 @@ async function generate(text) {
   const youTurn = addTurn("you", text);
   const botTurn = addTurn("bot", "");
   const body = botTurn.querySelector(".body");
+  const textEl = document.createElement("span");
   const cursor = document.createElement("span");
   cursor.className = "cursor";
-  body.appendChild(cursor);
+  body.append(textEl, cursor);
 
-  const decoder = new TextDecoder();
-  let promptBytes = text.length ? new TextEncoder().encode(text) : new Uint8Array([10]);
+  // The model was fine-tuned on "User: ...\nAssistant: ..." turns, so we feed
+  // it the same framing and stop when it starts a new turn.
+  const promptText = `User: ${text}\nAssistant:`;
+  let promptBytes = new TextEncoder().encode(promptText);
   if (promptBytes.length >= maxT) promptBytes = promptBytes.slice(-maxT + 1);
 
+  const decoder = new TextDecoder();
   ex.reset();
   let ptr = 0;
   for (const b of promptBytes) ptr = ex.forward(b);
 
   let emitted = 0;
+  let acc = "";
   const t0 = performance.now();
   let lastYield = t0;
 
   while (emitted < budget && ex.getPos() < maxT && !abort) {
     const tok = softmaxSample(ptr, temperature, topK);
-    const chunk = decoder.decode(new Uint8Array([tok]), { stream: true });
-    if (chunk) body.insertBefore(document.createTextNode(chunk), cursor);
+    acc += decoder.decode(new Uint8Array([tok]), { stream: true });
     emitted++;
     ptr = ex.forward(tok);
+
+    const cut = earliestStop(acc);
+    if (cut !== -1) {
+      acc = acc.slice(0, cut);
+      break;
+    }
 
     const now = performance.now();
     if (now - lastYield > 40) {
       lastYield = now;
+      textEl.textContent = acc;
       transcript.scrollTop = transcript.scrollHeight;
       await new Promise((r) => setTimeout(r, 0));
     }
   }
 
-  const tail = decoder.decode();
-  if (tail) body.insertBefore(document.createTextNode(tail), cursor);
+  acc += decoder.decode();
+  const cut = earliestStop(acc);
+  if (cut !== -1) acc = acc.slice(0, cut);
+
+  textEl.textContent = acc.trim() || "(no reply)";
   cursor.remove();
 
   const secs = (performance.now() - t0) / 1000;

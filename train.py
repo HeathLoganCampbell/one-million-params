@@ -83,6 +83,8 @@ def main():
     p.add_argument("--sample-every", type=int, default=500)
     p.add_argument("--save-every", type=int, default=0)
     p.add_argument("--resume", action="store_true", help="continue from --out if it exists")
+    p.add_argument("--init-from", default=None, metavar="CKPT",
+                   help="load weights from CKPT but start a fresh schedule at step 0")
     p.add_argument("--export-web", default=None, metavar="DIR",
                    help="also write DIR/model.bin at every checkpoint (live site updates)")
     p.add_argument("--seed", type=int, default=1337)
@@ -117,7 +119,11 @@ def main():
     optimizer = build_optimizer(model, args.lr, args.weight_decay)
 
     start_step = 0
-    if args.resume and os.path.exists(args.out):
+    if args.init_from:
+        ckpt = torch.load(args.init_from, map_location="cpu", weights_only=False)
+        model.load_state_dict(ckpt["model"])
+        print(f"initialised weights from {args.init_from} (step counter reset)")
+    elif args.resume and os.path.exists(args.out):
         ckpt = torch.load(args.out, map_location="cpu", weights_only=False)
         model.load_state_dict(ckpt["model"])
         if "optimizer" in ckpt:
@@ -151,6 +157,7 @@ def main():
 
     t0 = time.time()
     tokens_seen = 0
+    step = start_step
     for step in range(start_step, args.steps):
         for group in optimizer.param_groups:
             group["lr"] = lr_at(step, args)

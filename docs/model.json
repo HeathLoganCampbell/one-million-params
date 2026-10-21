@@ -6,5 +6,5 @@
   "mlp": 336,
   "vocab": 256,
   "block": 256,
-  "corpus": "mixed"
+  "corpus": "mixed + chat sft"
 }
