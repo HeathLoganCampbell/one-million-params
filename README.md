@@ -54,16 +54,15 @@ argmax      py=121 wasm=121  MATCH
 
 ## Trained weights
 
-Weights are committed under `models/`, and also attached to the
+The model behind the live demo is committed at `models/tiny-gpt-1m-mixed.pt`
+and attached to the
 [v0.1.0 release](https://github.com/HeathLoganCampbell/one-million-params/releases/tag/v0.1.0).
 
-| File | Corpus | Steps | Size |
-|---|---|---|---|
-| `models/tiny-gpt-1m-names.pt` | 100k first names | 3,000 | 4.04 MB |
-| `models/tiny-gpt-1m-gutenberg.pt` | 508 public-domain novels | 2,400 | 4.04 MB |
-| `models/tiny-gpt-1m-mixed.pt` | novels + 17 papers at 10% | in progress | 4.04 MB |
+| File | Corpus | Size |
+|---|---|---|
+| `models/tiny-gpt-1m-mixed.pt` | 508 novels + 17 ML papers at 10% | 4.04 MB |
 
-Weights-only, no optimiser state, so they load straight into `GPT`:
+Weights-only, no optimiser state, so it loads straight into `GPT`:
 
 ```python
 import torch
@@ -72,6 +71,12 @@ from model import GPT, GPTConfig
 ckpt = torch.load("models/tiny-gpt-1m-mixed.pt", map_location="cpu")
 model = GPT(GPTConfig(**ckpt["config"]))
 model.load_state_dict(ckpt["model"])
+```
+
+To rebuild the browser weights from it:
+
+```bash
+python export_weights.py --ckpt models/tiny-gpt-1m-mixed.pt --out docs
 ```
 
 ## Training
